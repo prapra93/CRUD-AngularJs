@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+ <!-- index.php !-->
+ <html>
+      <head>
+       <meta charset="utf-8">
+       <title>Crud</title>
+       <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.12/angular.min.js"></script>
+           <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+           <script src="js/app.js"></script>
+
+      </head>
+      <body ng-app="myApp" ng-controller="addController" ng-init="displayData()">
+           <br /><br />
+           <div class="container" style="width:725px;">
+                <h3 align="center">Crud avec angular</h3>
+
+                <div>
+                        <label>Name</label><input type="text" name="names" ng-model="names" class="form-control"><br/>
+                        <label>Price</label><input type="text" name="prices" ng-model="prices" class="form-control"><br/>
+                        <label>Company</label><input type="text" name="companies" ng-model="companies" class="form-control"><br/>
+                        <label>Description</label><input type="text" name="descriptions" ng-model="descriptions" class="form-control"><br/>
+                        <input type="hidden" ng-model="idproducts">
+                        <input type="submit" name="btnUpdate" class="btn btn-success" ng-click="update_data()" value="{{btnName}}">
+                        <button type="submit" name="insert" ng-disabled="test"  class="btn btn-success" ng-click="insert()" value="Insert">Insert</button><br/>
+            <br/>
+
+            <div class="row">
+                        <div class="col-sm-2 pull-left">
+                                <label>PageSize:</label>
+                                <select ng-model="data_limit" class="form-control">
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select>
+                        </div>
+
+                        <div class="col-sm-6 pull-right">
+                                <label>Search:</label>
+                                <input type="text" ng-model="search" ng-change="filter()" placeholder="Search" class="form-control" />
+                        </div>
+                    </div>
+            <br/>
+
+            <div class="row">
+                <divclass="col-md-12" ng-show="filter_data > 0">
+                            <table class="table table-bordered">
+                                <tr>
+                                        <th>ID&nbsp<a ng-click="sort_with('idproducts');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                        <th>Name&nbsp<a ng-click="sort_with('names');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                        <th>Price&nbsp<a ng-click="sort_with('prices');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                        <th>Company&nbsp<a ng-click="sort_with('companies');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                        <th>Description&nbsp<a ng-click="sort_with('descriptions');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                        <th>Actions</th>
+                                </tr>
+                                <tr ng-repeat="x in productList = (file | filter:search | orderBy : base :reverse) | beginning_data:(current_grid-1)*data_limit | limitTo:data_limit">
+                                        <td>{{x.idproducts}}</td>
+                                        <td>{{x.names}}</td>
+                                        <td>{{x.prices}}</td>
+                                        <td>{{x.companies}}</td>
+                                        <td>{{x.descriptions}}</td>
+                                        <td>
+                                        <button ng-click="delete(x.idproducts )"class="btn btn-danger">Delete</button>
+                                        <button ng-model="test" ng-click="updateData(x.idproducts, x.names, x.prices, x.companies, x.descriptions)" class="btn btn-success btn">Edit</button>
+                                        </td>
+                                </tr>
+                            </table>
+
+                </div>
+
+                <div class="col-md-12" ng-show="filter_data == 0">
+                                <div class="col-md-12">
+                                    <h4>No records found..</h4>
+                                </div>
+                        </div>
+                        <div class="col-md-12">
+                                <div class="col-md-6 pull-left">
+                                    <h5>Showing {{ productList.length }} of {{ entire_product }} entries</h5>
+                                </div>
+
+                    <div class="col-md-6" ng-show="filter_data > 0">
+                                    <div pagination="" page="current_grid" on-select-page="page_position(page)" boundary-links="true"
+                        total-items="filter_data" items-per-page="data_limit" class="pagination-small pull-right" previous-text="&laquo;" next-text="&raquo;"></div>
+                                </div>
+                </div>
+            </div>
+           </div>
+      </body>
+ </html>

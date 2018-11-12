@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+ <!-- index2.php !-->
+ <html>
+      <head>
+           <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+           <title>Crud</title>
+           <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+           <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.12/angular.min.js"></script>
+           <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+       <script src="js/app.js"></script>
+
+      </head>
+      <body ng-app="myApp" ng-controller="addController" ng-init="displayData()">
+           <br /><br />
+           <div class="container" style="width:725px;">
+                <h3 align="center">Crud avec angular</h3>
+
+
+            <div class="col-md-12">
+                        <div class="pull-right">
+                                <button class="btn btn-success" data-toggle="modal" data-target="#add_new_product_modal">Add Product</button>
+                </div>
+                    </div>
+
+                        <div class="row">
+                                <div class="col-sm-2 pull-left">
+                                        <label>PageSize:</label>
+                                        <select ng-model="data_limit" class="form-control">
+                                                <option>10</option>
+                                                <option>20</option>
+                                                <option>50</option>
+                                                <option>100</option>
+                                        </select>
+                                </div>
+
+                                <div class="col-sm-6 pull-right">
+                                        <label>Search:</label>
+                                        <input type="text" ng-model="search" ng-change="filter()" placeholder="Search" class="form-control" />
+                                </div>
+                        </div>
+                        <br/>
+
+                        <div class="row">
+                                <divclass="col-md-12" ng-show="filter_data > 0">
+                                <table class="table table-bordered">
+                                        <tr>
+                                                <th>ID&nbsp<a ng-click="sort_with('idproducts');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                                <th>Name&nbsp<a ng-click="sort_with('names');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                        <th>Price&nbsp<a ng-click="sort_with('prices');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                                <th>Company&nbsp<a ng-click="sort_with('companies');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                                <th>Description&nbsp<a ng-click="sort_with('descriptions');"><i class="glyphicon glyphicon-sort"></i></a></th>
+                                                <th>Actions</th>
+                                        </tr>
+                                        <tr ng-repeat="x in productList = (file | filter:search | orderBy : base :reverse) | beginning_data:(current_grid-1)*data_limit | limitTo:data_limit">
+                                                <td>{{x.idproducts}}</td>
+                                                <td>{{x.names}}</td>
+                                                <td>{{x.prices}}</td>
+                                                <td>{{x.companies}}</td>
+                                                <td>{{x.descriptions}}</td>
+                                                <td>
+                                                <button ng-click="delete(x.idproducts)"class="btn btn-danger">Delete</button>
+                                                <button ng-click="updateData(x.idproducts, x.names, x.prices, x.companies, x.descriptions)" class="btn btn-success">Edit</button>
+                                                </td>
+                                        </tr>
+                                </table>
+
+                                </div>
+
+                                <div class="col-md-12" ng-show="filter_data == 0">
+                                        <div class="col-md-12">
+                                                <h4>No records found..</h4>
+                                        </div>
+                                </div>
+                                <div class="col-md-12">
+                    <div class="col-md-6 pull-left">
+                                                <h5>Showing {{ productList.length }} of {{ entire_product }} entries</h5>
+                                        </div>
+                                        <div class="col-md-6" ng-show="filter_data > 0">
+                                                <div pagination="" page="current_grid" on-select-page="page_position(page)" boundary-links="true"
+                                                total-items="filter_data" items-per-page="data_limit" class="pagination-small pull-right" previous-text="&laquo;" next-text="&raquo;"></div>
+                                        </div>
+                                </div>
+                        </div>
+           </div>
+
+    <!-- Modal - Update Task -->
+                        <div class="modal fade" id="modal_update_product" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                                <div class="modal-header">
+                                                        <button type="button" ng-click="cancelUpdate()" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="myModalLabel">Product Details</h4>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                        <div class="form-group">
+                                                                <label name="names">Name</label>
+                                                                <input ng-model="names" type="text" id="names" class="form-control"/>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                                <label name="prices">Price</label>
+                                                                <input ng-model="prices" type="text" id="prices" class="form-control"/>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                                <label name="companies">Company</label>
+                                                                <input ng-model="companies" type="text" id="companies" class="form-control"/>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                                <label name="descriptions">Description</label>
+                                                                <textarea ng-model="descriptions" class="form-control" name="descriptions"></textarea>
+                                                        </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" ng-click="cancelUpdate()" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-success" type="submit" class="btn btn-success" ng-click="update_data()">Update</button>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                <!-- // Modal -->
+
+
+    <!-- Bootstrap Modals -->
+                <!-- Modal - Add New Task -->
+                        <div class="modal fade" id="add_new_product_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                                <div class="modal-header">
+                                                        <button type="button" ng-click="cancelUpdate()" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="myModalLabel">Add Product</h4>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                        <div class="form-group">
+                                                                <label name="names">Name</label>
+                                                                <input ng-model="names" type="text" id="names" class="form-control"/>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                                <label name="prices">Price</label>
+                                                                <input ng-model="prices" type="text" id="prices" class="form-control"/>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                                <label name="companies">Company</label>
+                                                                <input ng-model="companies" type="text" id="companies" class="form-control"/>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                                <label name="descriptions">Description</label>
+                                                                <textarea ng-model="descriptions" class="form-control" name="descriptions"></textarea>
+                                                        </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" ng-click="cancelUpdate()" data-dismiss="modal">Cancel</button>
+                                                    <button class="btn btn-success" type="submit" class="btn btn-primary" ng-click="insert()">Add Product</button>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                <!-- // Modal -->
+
+      </body>
+ </html>
